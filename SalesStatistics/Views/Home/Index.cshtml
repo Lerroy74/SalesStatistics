@@ -1,0 +1,242 @@
+﻿@model IEnumerable<SalesStatistics.Domain.Common.ViewModels.SalesDataBySallerViewModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<table>
+    <thead>
+        <tr>
+            <th>Продавец</th>
+            <th>План</th>
+            <th>Сумма</th>
+            <th>Процент</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @{
+            if (Model != null)
+            {
+                var idSaller = 0;
+                foreach (var m in Model)
+                {
+                    idSaller++;
+                    <tr>
+                        <td>@m.Seller</td>
+                        <td>@m.Plan</td>
+                        <td>@m.Ammount</td>
+                        <td id="@idSaller">@m.Percentage</td>
+                    </tr>
+                }
+            }
+
+        }
+    </tbody>
+</table>
+
+<div>
+    <div>
+        <div style="float: left; margin: 10px">
+            @{
+                foreach (var m in Model)
+                {
+                    <div>
+                        <label>@m.Seller</label>
+                    </div>
+                }
+            }
+
+        </div>
+
+        <div class="rating-histogram" style="margin: 10px">
+            @{
+
+                for (int i = 0; i < Model.Count(); i++)
+                {
+                    var id = i + 1;
+                    <div class="rating-bar-container one" data-id="@id">
+
+                        <span class="bar"></span>
+                        <span class="bar-number"></span>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+
+
+    <div class="hidden">
+        <form>
+            @{
+                var starNum = 0;
+                foreach (var m in Model)
+                {
+                    starNum++;
+                    var classI = "reviews_" + starNum + "star";
+                    <input type="text" class=@classI value="@m.Percentage">
+                }
+            }
+        </form>
+    </div>
+
+</div>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+    $(function () {
+        var stars = new Array();
+        var sum = 0;
+        var width = new Array();
+
+        var i;
+        for (i = 1; i < 9; i++) {
+            stars.push(parseInt($('.reviews_' + i + 'star').val()));
+        }
+
+        for (i = 0; i < stars.length; i++) {
+            sum += stars[i];
+        }
+
+        for (i = 0; i < stars.length; i++) {
+            w = ((stars[i])).toFixed(0);
+            width.push(w);
+            $('.rating-bar-container[data-id=' + (i + 1) + '] .bar').css('width', w + '%');
+        }
+
+        if (sum > 0) {
+            for (i = 0; i < stars.length; i++) {
+                $('.rating-bar-container[data-id=' + (i + 1) + '] .bar-number').html(width[i] + '%');
+            }
+        } else {
+            $(".rating-bar-container .bar-number").html('0%');
+        }
+    });
+</script>
+
+
+<style>
+    table {
+        font-family: Georgia, serif;
+        border: 6px solid #24943A;
+        background-color: #D4EED1;
+        width: 100%;
+        text-align: center;
+    }
+
+    table td, table.greenTable th {
+        border: 1px solid #24943A;
+        padding: 3px 2px;
+    }
+
+    table tbody td {
+        font-size: 13px;
+    }
+
+    table thead {
+        background: #24943A;
+        background: -moz-linear-gradient(top, #5baf6b 0%, #3a9e4d 66%, #24943A 100%);
+        background: -webkit-linear-gradient(top, #5baf6b 0%, #3a9e4d 66%, #24943A 100%);
+        background: linear-gradient(to bottom, #5baf6b 0%, #3a9e4d 66%, #24943A 100%);
+        border-bottom: 0px solid #444444;
+    }
+
+     table thead th {
+         font-size: 19px;
+         font-weight: bold;
+         color: #F0F0F0;
+         text-align: left;
+         border-left: 2px solid #24943A;
+     }
+
+     table thead th:first-child {
+         border-left: none;
+     }
+
+     table tfoot {
+         font-size: 13px;
+         font-weight: bold;
+         color: #F0F0F0;
+         background: #24943A;
+         background: -moz-linear-gradient(top, #5baf6b 0%, #3a9e4d 66%, #24943A 100%);
+         background: -webkit-linear-gradient(top, #5baf6b 0%, #3a9e4d 66%, #24943A 100%);
+         background: linear-gradient(to bottom, #5baf6b 0%, #3a9e4d 66%, #24943A 100%);
+         border-top: 1px solid #24943A;
+     }
+
+     table tfoot td {
+         font-size: 13px;
+     }
+
+     table tfoot .links {
+         text-align: right;
+     }
+
+     table tfoot .links a {
+         display: inline-block;
+         background: #FFFFFF;
+         color: #24943A;
+         padding: 2px 8px;
+         border-radius: 5px;
+     }
+
+    /*график*/
+    .rating-histogram {
+        padding: 5px 5px 5px 44px;
+        text-align: left;
+        width: 100%;
+    }
+
+        .rating-histogram .rating-bar-container {
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .rating-histogram .bar-label {
+            margin-right: 10px;
+            position: absolute;
+            left: -44px;
+            top: 2px;
+        }
+
+        .rating-histogram .bar-label:before {
+            content: "\f005";
+            font-family: FontAwesome;
+            font-size: 16px;
+            line-height: 16px;
+            height: 16px;
+            width: 16px;
+            color: #ccc;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .rating-histogram .bar {
+            background-color: #8e70af;
+            background-image: -webkit-linear-gradient(left, #8e70af, #48bfed);
+            background-image: linear-gradient(to right,#8e70af, #48bfed);
+            -webkit-transition: width 2s ease;
+            -moz-transition: width 2s ease;
+            transition: width 2s ease;
+            opacity: .8;
+            display: inline-block;
+            vertical-align: middle;
+            width: 1%;
+            height: 15px;
+            margin-right: 3px;
+        }
+
+        .rating-histogram .bar-number {
+            font-size: 14px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+
+    .hidden {
+        display: none;
+    }
+</style>
